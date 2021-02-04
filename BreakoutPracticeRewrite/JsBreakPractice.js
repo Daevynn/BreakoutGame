@@ -1,6 +1,6 @@
 // Canvas Variables
 
-var canvas =  document.getElementById("myCanvas"); // Searches document for an element with matching Id
+var canvas =  document.getElementById("breakOut"); // Searches document for an element with matching Id
 var ctx = canvas.getContext("2d"); // Sets the context of the canvas to reference
 
 // Ball Variables
@@ -23,18 +23,20 @@ var rightPress = false; // Right keypress
 
 // Brick Variables
 var brickHeight = 5;
-var brickWidth = 30;
+var brickWidth = 20;
 var brickPadding = 5; // Makes space between each brick
 var brickOffsetLeft = 10; // Keeps bricks from left edge
 var brickOffsetTop = 10; // Keeps bricks from top edge
-var brickColumnCount = 0;
-var brickRowCount = 0;
+var brickColumnCount = 25;
+var brickRowCount = 5;
 
 // Brick Array
 
 var bricks = [] // Creates array for bricks
 
-// c is the column. If column is less than the count, add 1 to column.
+// c is the column. If column is less than the count, add 1 to column. Bricks array is now 1D, and c populates the first dimension.
+// Take bricks array populated with c, to be bricks[c], append new array. r is the row, if r is less than count, add 1 to r. Bricks is now 2D array, bricks[c][r].
+// Finally, add properties to bricks[c][r] array: x, y, and strength.
 
 for(var c = 0; c < brickColumnCount; c++) {
     bricks[c] = [];
@@ -42,3 +44,19 @@ for(var c = 0; c < brickColumnCount; c++) {
         bricks[c][r] = { x: 0, y: 0, strength: 1 };
     }
 }
+
+// Information variables
+
+var score = 0;
+var lives = 3;
+
+// Event listeners
+
+document.addEventListener("keyDown", keyDownHandler, false);
+document.addEventListener("keyUp", keyUpHandler, false);
+
+// Functions Start
+
+// Keypress functions
+
+
