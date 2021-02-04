@@ -59,4 +59,20 @@ document.addEventListener("keyUp", keyUpHandler, false);
 
 // Keypress functions
 
+function keyUpHandler(e) {
+    if(e.key == "Right" || e.key == "ArrowRight") {
+        rightPress = true;
+    }
+    else if (e.key == "Left" || e.key == "ArrowLeft") {
+        leftPress = true;
+    }
+}
 
+function keyDownHandler(e) {
+    if(e.key == "Right" || e.key == "ArrowRight") {
+        rightPress = false;
+    }
+    else if (e.key == "Left" || e.key == "ArrowLeft") {
+        leftPress = false;
+    }
+}
