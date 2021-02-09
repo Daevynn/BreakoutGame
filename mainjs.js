@@ -139,7 +139,7 @@ function ballCollision () {
     if(ballY + ballDy < ballRadius) {
         ballDy = -ballDy;
     }
-    if(ballX > paddleX && ballX < paddleX + paddleWidth && ballY > paddleY && ballY > paddleY - paddleHeight){
+    if(ballX + ballDx > paddleX && ballX + ballDx < paddleX + paddleWidth && ballY + ballDy < paddleY && ballY + ballDy > paddleY - paddleHeight){
         ballDy = -ballDy;
     }
     else if(ballY + ballDy > canvas.height - ballRadius) {
