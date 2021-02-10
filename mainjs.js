@@ -1,65 +1,64 @@
 // Canvas Variables
 
-var canvas =  document.getElementById("breakOut"); // Searches document for an element with matching Id
-var ctx = canvas.getContext("2d"); // Sets the context of the canvas to reference
-
-// Gamestart variable
-
-var interval = setInterval(draw, 10);
+const canvas =  document.getElementById("breakOut"); // Searches document for an element with matching Id
+const ctx = canvas.getContext("2d"); // Sets the context of the canvas to reference
 
 // Ball Variables
 
-var ballX = canvas.width / 2;
-var ballY = canvas.height - 70;
-var ballDx = 2; // Ball x Speed
-var ballDy = -5; // Ball y speed
-var ballRadius = 5;
-var ballColor = "red";
+const ballColor = "red";
+
+let ballX = canvas.width / 2;
+let ballY = canvas.height - 70;
+let ballDx = 2; // Ball x Speed
+let ballDy = -5; // Ball y speed
+let ballRadius = 5;
 
 // Paddle Variables
 
-var paddleX = canvas.width / 2;
-var paddleY = canvas.height - 50;
-var paddleWidth = 65;
-var paddleHeight = 10;
-var paddleDx = 7; // Paddle Speed
-var leftPress = false; // Left keypress
-var rightPress = false; // Right keypress
-var paddleColor = "blue"
+const paddleHeight = 10;
+const paddleDx = 7; // Paddle Speed
+const paddleColor = "blue"
+
+let paddleX = canvas.width / 2;
+let paddleY = canvas.height - 50;
+let paddleWidth = 65;
+let leftPress = false; // Left keypress
+let rightPress = false; // Right keypress
 
 // Text Variables
 
-var textFill = "#171717";
+const textFill = "#171717";
 
 // Brick Variables
-var brickHeight = 10;
-var brickWidth = 60;
-var brickPadding = 10; // Makes space between each brick
-var brickOffsetLeft = 15; // Keeps bricks from left edge
-var brickOffsetTop = 20; // Keeps bricks from top edge
-var brickColumnCount = 10;
-var brickRowCount = 5;
-var brickColor = "green"
+const brickHeight = 10;
+const brickPadding = 10; // Makes space between each brick
+const brickOffsetLeft = 15; // Keeps bricks from left edge
+const brickOffsetTop = 20; // Keeps bricks from top edge
+
+let brickWidth = 60;
+let brickColumnCount = 10;
+let brickRowCount = 5;
+let brickColor = "green";
 
 //              --------     Brick Array    --------
 
-var bricks = [] // Creates array for bricks
+let bricks = [] // Creates array for bricks
 
 // c is the column. If column is less than the count, add 1 to column. Bricks array is now 1D, and c populates the first dimension.
 // Take bricks array populated with c, to be bricks[c], append new array. r is the row, if r is less than count, add 1 to r. Bricks is now 2D array, bricks[c][r].
 // Finally, add properties to bricks[c][r] array: x, y, and strength.
 
-for(var c = 0; c < brickColumnCount; c++) {
+for(let c = 0; c < brickColumnCount; c++) {
     bricks[c] = [];
-    for(var r = 0; r < brickRowCount; r++) {
+    for(let r = 0; r < brickRowCount; r++) {
         bricks[c][r] = { x: 0, y: 0, strength: 1 };
     }
 }
 
 // Information variables
 
-var score = 0;
-var lives = 3;
+let score = 0;
+let lives = 3;
 
 //              --------     Event listeners    --------
 
@@ -111,9 +110,9 @@ function resetPos() {
 // Collision Detection Function
 
 function brickCollision() {
-    for (var c = 0; c < brickColumnCount; c++) {
-        for (var r = 0; r < brickRowCount; r++) {
-            var b = bricks[c][r];
+    for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
+            let b = bricks[c][r];
             if(b.strength >= 1) {
                 if(ballX > b.x && ballX < b.x + brickWidth && ballY > b.y && ballY < b.y + brickHeight) {
                     ballDy = -ballDy;
@@ -124,7 +123,7 @@ function brickCollision() {
                     if(score == brickColumnCount * brickRowCount) {
                         alert("Congratulations! You've done it you son of a gun!");
                         document.location.reload();
-                        clearInterval(interval);
+                        draw();
                     }
                 }
             }
@@ -134,7 +133,7 @@ function brickCollision() {
 
 function ballCollision () {
     if(ballX + ballDx > canvas.width - ballRadius || ballX + ballDx < ballRadius) {
-        ballDx = -ballDx
+        ballDx = -ballDx;
     }
     if(ballY + ballDy < ballRadius) {
         ballDy = -ballDy;
@@ -147,7 +146,7 @@ function ballCollision () {
         if (!lives) {
             alert("Game Over.");
         document.location.reload();
-        clearInterval(interval);
+        draw();
         }
         else {
             lives--;
@@ -181,11 +180,11 @@ function drawPaddle() {
 }
 
 function drawBricks() {
-    for(var c = 0; c < brickColumnCount; c++) {
-        for(var r = 0; r < brickRowCount; r++) {
+    for(let c = 0; c < brickColumnCount; c++) {
+        for(let r = 0; r < brickRowCount; r++) {
             if(bricks[c][r].strength >= 1) {
-                var brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
-                var brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+                let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+                let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
                 bricks[c][r].x = brickX;
                 bricks[c][r].y = brickY;
                 ctx.beginPath();
@@ -216,4 +215,7 @@ function draw() {
     ballCollision();
     ballX += ballDx;
     ballY += ballDy;
+    requestAnimationFrame(draw)
 }
+
+draw();
