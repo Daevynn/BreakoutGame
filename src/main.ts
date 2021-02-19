@@ -1,83 +1,8 @@
+import { Ball, Paddle, Brick, Field } from './objects';
+
 // Canvas Variables
-
-const canvas =  document.getElementById("breakOut"); // Searches document for an element with matching Id
-const ctx = canvas.getContext("2d"); // Sets the context of the canvas to reference
-
-// Classes
-
-class Ball {
-    constructor(x, y, dx, dy,radius, color = "red") {
-        this.x = x;
-        this.y = y;
-        this.dx = dx;
-        this.dy = dy;
-        this.radius = radius;
-        this.color = color;
-    }
-
-    render(ctx) {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
-        ctx.fillStyle = this.color;
-        ctx.fill();
-        ctx.closePath();
-    }
-}
-
-class Paddle {
-    constructor(x, y, dx, width, height, color, left, right, ang) {
-        this.x = x;
-        this.y = y;
-        this.dx = dx;
-        this.width = width;
-        this.height = height;
-        this.color = color;
-        this.left = left;
-        this.right = right;
-        this.ang = ang;
-    }
-    render(ctx) {
-        ctx.beginPath();
-        ctx.rect(this.x, this.y, this.width, this.height);
-        ctx.fillStyle = this.color;
-        ctx.fill();
-        ctx.closePath;
-
-        ctx.beginPath();
-        ctx.moveTo((this.x + this.width / 2), (this.y - this.width / 2));
-        ctx.lineTo((this.x + this.width / 2), this.y);
-        ctx.stroke();
-    }
-}
-
-class Brick {
-    constructor(x, y, strength, color, width, height) {
-        this.x = x;
-        this.y = y;
-        this.strength = strength;
-        this.color = color;
-        this.width = width;
-        this.height = height;
-    }
-    render(ctx) {
-        ctx.beginPath();
-        ctx.rect(this.x, this.y, this.width, this.height);
-        ctx.fillStyle = this.color;
-        ctx.fill();
-        ctx.closePath();
-    }
-}
-
-class Field {
-    constructor(columns, rows) {
-        this.columns = columns;
-        this.rows = rows;
-    }
-    render() {
-
-    }
-}
-
+const canvas = document.getElementById("breakOut") as HTMLCanvasElement; // Searches document for an element with matching Id
+const ctx = canvas.getContext("2d") as CanvasRenderingContext2D; // Sets the context of the canvas to reference
 
 // Objects
 
@@ -126,12 +51,12 @@ let brickRowCount = 5;
 // Take bricks array populated with c, to be bricks[c], append new array. r is the row, if r is less than count, add 1 to r. Bricks is now 2D array, bricks[c][r].
 // Finally, add properties to bricks[c][r] array: x, y, and strength.
 
-let bricks = [];
+let bricks: Brick[][] = [];
 
-function initializeBricks () {
-        for(let c = 0; c < brickColumnCount; c++) {
+function initializeBricks() {
+    for (let c = 0; c < brickColumnCount; c++) {
         bricks[c] = [];
-        for(let r = 0; r < brickRowCount; r++) {
+        for (let r = 0; r < brickRowCount; r++) {
             const brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
             const brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
             bricks[c][r] = new Brick(brickX, brickY, brickStrength, brickColor, brickWidth, brickHeight);
@@ -155,8 +80,8 @@ document.addEventListener("keyup", keyUpHandler, false);
 
 // Keypress functions
 
-function keyUpHandler(e) {
-    if(e.key == "Right" || e.key == "ArrowRight") {
+function keyUpHandler(e: KeyboardEvent) {
+    if (e.key == "Right" || e.key == "ArrowRight") {
         paddle.right = false;
     }
     else if (e.key == "Left" || e.key == "ArrowLeft") {
@@ -164,8 +89,8 @@ function keyUpHandler(e) {
     }
 }
 
-function keyDownHandler(e) {
-    if(e.key == "Right" || e.key == "ArrowRight") {
+function keyDownHandler(e: KeyboardEvent) {
+    if (e.key == "Right" || e.key == "ArrowRight") {
         paddle.right = true;
     }
     else if (e.key == "Left" || e.key == "ArrowLeft") {
@@ -174,10 +99,10 @@ function keyDownHandler(e) {
 }
 
 function paddleMovement() {
-    if(paddle.right && paddle.x < canvas.width - paddle.width) {
+    if (paddle.right && paddle.x < canvas.width - paddle.width) {
         paddle.x += paddle.dx;
     }
-    if(paddle.left && paddle.x > 0) {
+    if (paddle.left && paddle.x > 0) {
         paddle.x -= paddle.dx;
     }
 }
@@ -199,14 +124,14 @@ function brickCollision() {
     for (let c = 0; c < brickColumnCount; c++) {
         for (let r = 0; r < brickRowCount; r++) {
             let b = bricks[c][r];
-            if(b.strength >= 1) {
-                if(ball.x > b.x && ball.x < b.x + b.width && ball.y > b.y && ball.y < b.y + b.height) {
+            if (b.strength >= 1) {
+                if (ball.x > b.x && ball.x < b.x + b.width && ball.y > b.y && ball.y < b.y + b.height) {
                     ball.dy = -ball.dy;
                     b.strength -= 1;
-                    if(b.strength == 0) {
+                    if (b.strength == 0) {
                         score += 1;
                     }
-                    if(score == brickColumnCount * brickRowCount) {
+                    if (score == brickColumnCount * brickRowCount) {
                         alert("Congratulations! You've done it you son of a gun!");
                         document.location.reload();
                         draw();
@@ -228,7 +153,7 @@ function getAngle() { // calcuates that angle of ball compared to paddle
 
 let colAngle = getAngle(); // Sets the colAngle variable to result from getAngle function
 
-function angleCollision (colAngle) { // changes ball's velocity based on angle it hits, better to change to switch statement
+function angleCollision (colAngle: number) { // changes ball's velocity based on angle it hits, better to change to switch statement
     if (colAngle >= 0 && colAngle <= 29) {
         ball.dx = -(Math.abs(ballDx * 1.5))
         ball.dy = ballDy;
@@ -267,14 +192,14 @@ function angleCollision (colAngle) { // changes ball's velocity based on angle i
 
 // Ball Collision
 
-function ballCollision () {
-    if(ball.x + ball.dx > canvas.width - ball.radius || ball.x + ball.dx < ball.radius) {
+function ballCollision() {
+    if (ball.x + ball.dx > canvas.width - ball.radius || ball.x + ball.dx < ball.radius) {
         ball.dx = -ball.dx;
     }
-    if(ball.y + ball.dy < ball.radius) {
+    if (ball.y + ball.dy < ball.radius) {
         ball.dy = -ball.dy;
     }
-    if(ball.x + ball.dx > paddle.x && ball.x + ball.dx < paddle.x + paddle.width && ball.y + ball.dy < paddle.y && ball.y + ball.dy > paddle.y - paddle.height){
+    if (ball.x + ball.dx > paddle.x && ball.x + ball.dx < paddle.x + paddle.width && ball.y + ball.dy < paddle.y && ball.y + ball.dy > paddle.y - paddle.height) {
         // ball.dy = -ball.dy;
         // getAngle();
         angleCollision(colAngle);
@@ -282,12 +207,12 @@ function ballCollision () {
         console.log(ball.dx);
         console.log(ball.dy);
     }
-    else if(ball.y + ball.dy > canvas.height - ball.radius) {
+    else if (ball.y + ball.dy > canvas.height - ball.radius) {
         ball.dy = -ball.dy;
         if (!lives) {
             alert("Game Over.");
-        document.location.reload();
-        draw();
+            document.location.reload();
+            draw();
         }
         else {
             lives--;
@@ -308,10 +233,10 @@ function drawScore() {
 }
 
 function drawBricks() {
-    for(let c = 0; c < brickColumnCount; c++) {
-        for(let r = 0; r < brickRowCount; r++) {
+    for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
             let brick = bricks[c][r];
-            if(brick.strength >= 1) {
+            if (brick.strength >= 1) {
                 brick.render(ctx);
             }
         }
@@ -331,7 +256,7 @@ function testPos() {
     ctx.stroke();
 }
 
-function drawAngle(colAngle) {
+function drawAngle(colAngle: number) {
     ctx.font = "16px Arial";
     ctx.fillStyle = textFill;
     ctx.fillText("Angle: " + colAngle, canvas.width / 2, canvas.height - 20);
