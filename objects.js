@@ -1,38 +1,57 @@
 // Object Document
 
-let ball = {
-    x : 0,
-    y : 0,
-    dy : 0,
-    dx : 0,
-    radius : 0,
-    power : 0, // More power allows ball to pierce blocks
-    strength : 0, // Default ball will have max strength, Some ball powerups will cause secondary balls to disipate after a couple hits
-    type: "", // The type of ball will tell you what the ball does
+class Ball {
+    constructor(x, y, dx, dy, r, c) {
+        this.x = x;
+        this.y = y;
+        this.dx = dx;
+        this.dy = dy;
+        this.r = r; // radius
+        this.c = c; // color
+
+    }
+    render(ctx) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = this.c;
+        ctx.fill();
+        ctx.closePath();
+    }
 }
 
-let paddle = {
-    x : 0,
-    y : 0,
-    dx : 0,
-    width : 0, // Powerup will allow you to extend paddle width
+class Paddle {
+    constructor(x, y, dx, w, h, c) {
+        this.x = x;
+        this.y = y;
+        this.dx = dx;
+        this.h = h; // height
+        this.w = w; // width
+        this.c = c; // color
+    }
+    render(ctx) {
+        ctx.beginPath();
+        ctx.rect(this.x, this.y, this.w, this.h)
+        ctx.fillStyle = this.c;
+        ctx.fill();
+        ctx.closePath();
+    }
 }
 
-let brick = {
-    x : 0,
-    y : 0,
-    strength : 0, // Higher strength requires more hits
-    type : "", // Different types of bricks will do different things, i.e. split will split upon destrucktion. 
-}
+class Brick {
+    constructor(x, y, h, w, c, hp) {
+        this.x = x;
+        this.y = y;
+        this.h = h;
+        this.w = w;
+        this.c = c;
+        this.hp = hp;
 
-let powerUp = {
-    type : "", // Different types of powerups do different things
-    duration : 0, // This is how long the power up will last
+    }
+    render(ctx) {
+        ctx.beginPath();
+        ctx.rect(this.x, this.y, this.w, this.h);
+        ctx.fillStyle = this.c;
+        ctx.fill();
+        ctx.closePath();
+    }
 }
-
-let enemy = {
-    type : "",
-    hp : 0,
-    speed : 0,
-}
-
