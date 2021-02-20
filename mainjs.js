@@ -25,7 +25,7 @@ class Ball {
 }
 
 class Paddle {
-    constructor(x, y, dx, width, height, color, left, right) {
+    constructor(x, y, dx, width, height, color, left, right, ang) {
         this.x = x;
         this.y = y;
         this.dx = dx;
@@ -34,13 +34,19 @@ class Paddle {
         this.color = color;
         this.left = left;
         this.right = right;
+        this.ang = ang;
     }
     render(ctx) {
         ctx.beginPath();
-        ctx.rect(paddle.x, paddle.y, paddle.width, paddle.height);
-        ctx.fillStyle = paddle.color;
+        ctx.rect(this.x, this.y, this.width, this.height);
+        ctx.fillStyle = this.color;
         ctx.fill();
         ctx.closePath;
+
+        ctx.beginPath();
+        ctx.moveTo((this.x + this.width / 2), (this.y - this.width / 2));
+        ctx.lineTo((this.x + this.width / 2), this.y);
+        ctx.stroke();
     }
 }
 
@@ -77,21 +83,22 @@ class Field {
 
 let ballRadius = 5;
 let ballX = canvas.width / 2;
-let ballY = canvas.height - 70;
+let ballY = canvas.height - 90;
 let ballColor = "red";
 let ballDx = 2;
 let ballDy = -5;
 
 let ball = new Ball(ballX, ballY, ballDx, ballDy, ballRadius, ballColor);
 
-let paddleX = canvas.width / 2;
-let paddleY = canvas.height - 50;
-let paddleWidth = 65;
+let paddleWidth = 85;
 let paddleHeight = 10;
+let paddleX = canvas.width / 2 - paddleWidth / 2;
+let paddleY = canvas.height - 50;
 let paddleColor = "blue";
-let paddleDx = 7;
+let paddleDx = 10;
+let paddleAng = paddleY + paddleWidth / 2;
 
-let paddle = new Paddle(paddleX, paddleY, paddleDx, paddleWidth, paddleHeight, paddleColor, false, false);
+let paddle = new Paddle(paddleX, paddleY, paddleDx, paddleWidth, paddleHeight, paddleColor, false, false, paddleAng);
 
 // Variables
 
@@ -179,10 +186,10 @@ function paddleMovement() {
 
 function resetPos() {
     ball.x = canvas.width / 2;
-    ball.y = canvas.height - 70;
+    ball.y = canvas.height - 90;
     ball.dx = 2;
     ball.dy = -5;
-    paddle.x = canvas.width / 2;
+    paddle.x = canvas.width / 2 - paddle.width / 2;
     paddle.y = canvas.height - 50;
 }
 
@@ -212,44 +219,43 @@ function brickCollision() {
 
 // Angle Function
 
-let xCalc = (paddle.x + (paddle.width / 2) - (ball.x + ball.dx));
-let yCalc = (paddle.y - ball.y)
-
-function getAngle() {
+function getAngle() { // calcuates that angle of ball compared to paddle
+    const xCalc = (paddle.x + (paddle.width / 2) - (ball.x + ball.dx));
+    const yCalc = (paddle.y - ball.y);
     let angle = Math.atan2(yCalc, xCalc) * 180 / Math.PI;
     return angle;
 }
 
-let colAngle = getAngle();
+let colAngle = getAngle(); // Sets the colAngle variable to result from getAngle function
 
-function angleCollision (colAngle) {
-    if (colAngle >= 0 && colAngle <= 29){
-        ball.dx = -(ballDx * 1.5);
-        ball.dy = (ballDy / 2);
+function angleCollision (colAngle) { // changes ball's velocity based on angle it hits, better to change to switch statement
+    if (colAngle >= 0 && colAngle <= 29) {
+        ball.dx = -(Math.abs(ballDx * 1.5))
+        ball.dy = ballDy;
     }
-    if (colAngle >= 30 && colAngle <= 59) {
-        ball.dx = -ballDx;
-        ball.dy = -ballDx;
+    else if (colAngle >= 30 && colAngle <= 59) {
+        ball.dx = -(Math.abs(ballDx));
+        ball.dy = ballDy;
     }
-    if (colAngle >= 60 && colAngle <= 89 ) {
-        ball.dx =- -(ballDx / 2);
-        ball.dy = -(ballDy * 1.5);
+    else if (colAngle >= 60 && colAngle <= 89 ) {
+        ball.dx =- -(Math.abs(ballDx / 2));
+        ball.dy = ballDy
     }
-    if (colAngle == 90) {
+    else if (colAngle == 90) {
         ball.dx = 0;
         ball.dy = ballDy;
     }
-    if (colAngle >= 91 && colAngle <= 119) {
-        ball.dx = (ballDx / 2);
-        ball.dy = (ballDy * 1.5);
+    else if (colAngle >= 91 && colAngle <= 119) {
+        ball.dx = (Math.abs(ballDx / 2));
+        ball.dy = ballDy;
     }
-    if (colAngle >= 120 && colAngle <= 149) {
-        ball.dx = ballDx;
-        ball.dy = -ballDx;
+    else if (colAngle >= 120 && colAngle <= 149) {
+        ball.dx = (Math.abs(ballDx));
+        ball.dy = ballDy;
     }
-    if (colAngle >= 150 && colAngle <= 180) {
-        ball.dx = (ballDx * 1.5);
-        ball.dy = (ballDy / 2);
+    else if (colAngle >= 150 && colAngle <= 180) {
+        ball.dx = (Math.abs(ballDx * 1.5));
+        ball.dy = ballDy;
     }
     else {
         ball.dx = ballDx;
@@ -270,10 +276,11 @@ function ballCollision () {
     }
     if(ball.x + ball.dx > paddle.x && ball.x + ball.dx < paddle.x + paddle.width && ball.y + ball.dy < paddle.y && ball.y + ball.dy > paddle.y - paddle.height){
         // ball.dy = -ball.dy;
-        getAngle();
-        // let colAngle = getAngle();
+        // getAngle();
         angleCollision(colAngle);
         console.log(colAngle);
+        console.log(ball.dx);
+        console.log(ball.dy);
     }
     else if(ball.y + ball.dy > canvas.height - ball.radius) {
         ball.dy = -ball.dy;
@@ -336,6 +343,7 @@ function draw() {
     paddle.render(ctx);
     ball.render(ctx);
     testPos(); // testing positions
+    colAngle = getAngle();
     drawAngle(colAngle); // testing angle
     drawScore();
     drawLives();
